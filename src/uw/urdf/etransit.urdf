@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="etransit">
+    <link name="base_footprint"/>
+    <link name="fl_camera"/>
+    <link name="forward_camera"/>
+    <link name="fr_camera"/>
+    <link name="front_lidar"/>
+    <link name="rl_camera"/>
+    <link name="rl_lidar"/>
+    <link name="rr_camera"/>
+    <link name="rr_lidar"/>
+    <link name="radar"/>
+    <joint name="fl_camera_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="fl_camera"/>
+        <origin xyz="2.620 0.910 2.680" rpy="1.5619 -3.1154 2.3365"/>
+    </joint>
+    <joint name="forward_camera_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="forward_camera"/>
+        <origin xyz="2.720 0.010 2.450" rpy="1.5514 -3.1262 1.5551"/>
+    </joint>
+    <joint name="fr_camera_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="fr_camera"/>
+        <origin xyz="2.620 -0.910 2.680" rpy="1.5568 -3.1086 0.8158"/>
+    </joint>
+    <joint name="front_lidar_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="front_lidar"/>
+        <origin xyz="2.720 0.000 2.618" rpy="-0.0033 0.2139 0.0000"/>
+    </joint>
+    <joint name="rl_camera_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="rl_camera"/>
+        <origin xyz="-0.360 0.939 2.680" rpy="-1.5708 0.0122 0.8100"/>
+    </joint>
+    <joint name="rl_lidar_joint" type="fixed">
+        <parent link="front_lidar"/>
+        <child link="rl_lidar"/>
+        <origin xyz="-2.881 0.980 -0.650" rpy="-2.3542 2.9446 0.0195"/>
+    </joint>
+    <joint name="rr_camera_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="rr_camera"/>
+        <origin xyz="-0.314 -0.938 2.679" rpy="-1.5671 -0.0192 2.3332"/>
+    </joint>
+    <joint name="rr_lidar_joint" type="fixed">
+        <parent link="front_lidar"/>
+        <child link="rr_lidar"/>
+        <origin xyz="-2.839 -0.971 -0.629" rpy="-0.7935 0.1830 3.1380"/>
+    </joint>
+    <joint name="radar_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="radar"/>
+        <origin xyz="4.65 0.0 0.46" rpy="0 0 0"/>
+    </joint>
+</robot>

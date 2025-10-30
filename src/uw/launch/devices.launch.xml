@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="playback" default="false" />
+    <arg name="cameras" default="false" />
+    <arg name="compress_images" default="true" />
+
+    <!-- URDF model -->
+    <include file="$(find-pkg-share uw)/launch/robot_state_publisher.launch.py">
+        <arg name="use_sim_time" value="$(var playback)" />
+        <arg name="urdf_path" value="$(find-pkg-share uw)/urdf/etransit.urdf" />
+    </include>
+
+    <!-- USB/CAN Interface -->
+    <node unless="$(var playback)" pkg="dataspeed_can_usb" exec="can_node" output="screen">
+        <remap from="can_bus_1/can_rx" to="/radar/can_rx"/>
+        <remap from="can_bus_1/can_tx" to="/radar/can_tx"/>
+        <remap from="can_bus_1/can_err" to="/radar/can_err"/>
+        <param name="bitrate_1" value="500000" />
+        <remap from="can_bus_2/can_rx" to="/dsrc/can_rx"/>
+        <remap from="can_bus_2/can_tx" to="/dsrc/can_tx"/>
+        <remap from="can_bus_2/can_err" to="/dsrc/can_err"/>
+        <param name="bitrate_1" value="500000" />
+        <remap from="can_bus_3/can_rx" to="/can_bus_dbw/can_rx"/>
+        <remap from="can_bus_3/can_tx" to="/can_bus_dbw/can_tx"/>
+        <remap from="can_bus_3/can_err" to="/can_bus_dbw/can_err"/>
+        <param name="bitrate_3" value="500000" />
+    </node>
+
+    <!-- DBW interface -->
+    <include file="$(find-pkg-share ds_dbw_can)/launch/dbw.launch.xml">
+        <arg name="vehicle_ns" value="vehicle" />
+        <arg name="live" value="false" />
+        <arg name="can_ns" value="/can_bus_dbw" />
+    </include>
+
+    <!-- Continental RADAR -->
+    <group>
+        <push-ros-namespace namespace="radar" />
+        <node pkg="conti_radar_can" exec="conti_radar_can_node" name="conti_radar_can" output="screen">
+            <param name="use_sim_time" value="$(var playback)" />
+            <param name="radar_name" value="radar" />
+            <param name="send_speed" value="true" />
+        </node>
+    </group>
+
+    <!-- Cameras -->
+    <include if="$(var cameras)" file="$(find-pkg-share uw)/launch/camera.launch.py">
+        <arg name="param_file" value="$(find-pkg-share uw)/camera_settings/forward_camera.json" />
+        <arg name="camera_name" value="forward_camera" />
+        <arg name="jpeg_compression" value="$(var compress_images)" />
+        <arg name="upside_down" value="true" />
+    </include>
+    <include if="$(var cameras)" file="$(find-pkg-share uw)/launch/camera.launch.py">
+        <arg name="param_file" value="$(find-pkg-share uw)/camera_settings/fl_camera.json" />
+        <arg name="camera_name" value="fl_camera" />
+        <arg name="jpeg_compression" value="$(var compress_images)" />
+        <arg name="upside_down" value="false" />
+    </include>
+    <include if="$(var cameras)" file="$(find-pkg-share uw)/launch/camera.launch.py">
+        <arg name="param_file" value="$(find-pkg-share uw)/camera_settings/fr_camera.json" />
+        <arg name="camera_name" value="fr_camera" />
+        <arg name="jpeg_compression" value="$(var compress_images)" />
+        <arg name="upside_down" value="false" />
+    </include>
+    <include if="$(var cameras)" file="$(find-pkg-share uw)/launch/camera.launch.py">
+        <arg name="param_file" value="$(find-pkg-share uw)/camera_settings/rl_camera.json" />
+        <arg name="camera_name" value="rl_camera" />
+        <arg name="jpeg_compression" value="$(var compress_images)" />
+        <arg name="upside_down" value="false" />
+    </include>
+    <include if="$(var cameras)" file="$(find-pkg-share uw)/launch/camera.launch.py">
+        <arg name="param_file" value="$(find-pkg-share uw)/camera_settings/rr_camera.json" />
+        <arg name="camera_name" value="rr_camera" />
+        <arg name="jpeg_compression" value="$(var compress_images)" />
+        <arg name="upside_down" value="false" />
+    </include>
+
+    <!-- Novatel GPS -->
+    <include unless="$(var playback)" file="/home/uw/ros2_ws/src/uw/launch/novatel_driver.launch.py">
+        <arg name="oem7_ip_addr" value="192.168.0.7" />
+        <arg name="oem7_port" value="2000" />
+    </include>
+
+    <!-- Front Ouster LIDAR -->
+    <include unless="$(var playback)" file="$(find-pkg-share uw)/launch/ouster_driver.launch.py">
+        <arg name="params_file" value="$(find-pkg-share uw)/config/front_lidar.yaml" />
+        <arg name="ouster_ns" value="front_lidar" />
+    </include>
+
+    <!-- Rear-left Ouster LIDAR -->
+    <include unless="$(var playback)" file="$(find-pkg-share uw)/launch/ouster_driver.launch.py">
+        <arg name="params_file" value="$(find-pkg-share uw)/config/rl_lidar.yaml" />
+        <arg name="ouster_ns" value="rl_lidar" />
+    </include>
+
+    <!-- Rear-right Ouster LIDAR -->
+    <include unless="$(var playback)" file="$(find-pkg-share uw)/launch/ouster_driver.launch.py">
+        <arg name="params_file" value="$(find-pkg-share uw)/config/rr_lidar.yaml" />
+        <arg name="ouster_ns" value="rr_lidar" />
+    </include>
+
+</launch>

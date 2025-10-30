@@ -1,0 +1,18 @@
+{
+    "name": "Lucid Vision Labs-TRI051S-C-241500499",
+    "format": "BAYER_RG_8",
+    "x_offset": 0,
+    "y_offset": 0,
+    "width": 2448,
+    "height": 2048,
+    "x_binning": 1,
+    "y_binning": 1,
+    "frame_rate": 5,
+    "gain": 1.0,
+    "exposure": 300.0,
+    "auto_gain": "off",
+    "auto_exposure": "on",
+    "mtu": 9000,
+    "ptp_enable": false,
+    "ptp_slave_only": false
+}

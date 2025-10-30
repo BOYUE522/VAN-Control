@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="size" default="0.0256" />
+  <arg name="image_topic" default="/forward_camera/image_rect" />
+
+  <node pkg="camera_calibration" exec="cameracalibrator"
+        name="camera_calibrator" output="screen"
+        args="--size 6x8 --square $(var size) --no-service-check">
+    <remap from="image"   to="$(var image_topic)" />
+  </node>
+
+</launch>

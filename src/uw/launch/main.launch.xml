@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="playback" default="false" />
+    <arg name="autonomy" default="false" />
+    <arg name="compress_images" default="false" />
+
+    <!-- Start up device drivers and load URDF extrinsics calibration -->
+    <include file="$(find-pkg-share uw)/launch/devices.launch.xml" >
+        <arg name="playback" value="$(var playback)" />
+        <arg name="cameras" value="true" />
+        <arg name="compress_images" value="$(var compress_images)" />
+    </include>
+
+    <!-- Start up autonomy modules -->
+    <include if="$(var autonomy)" file="$(find-pkg-share uw)/launch/autonomy.launch.xml" >
+        <arg name="playback" value="$(var playback)" />
+    </include>
+
+    <!-- Node to control enabling/disabling the autonomy system -->
+    <node pkg="uw" exec="sys_enable_node.py" name="sys_enable_node" output="screen">
+        <param name="use_sim_time" value="$(var playback)" />
+    </node>
+
+    <!-- Load preconfigured RViz display -->
+    <arg name="rviz" default="true" />
+    <group if="$(var rviz)">
+        <node if="$(var autonomy)"  pkg="rviz2" exec="rviz2" name="autonomy_viz" args="-d $(find-pkg-share uw)/rviz/autonomy_viz.rviz">
+            <param name="use_sim_time" value="$(var playback)" />
+        </node>
+        <node unless="$(var autonomy)"  pkg="rviz2" exec="rviz2" name="sensor_viz" args="-d $(find-pkg-share uw)/rviz/sensor_viz.rviz">
+            <param name="use_sim_time" value="$(var playback)" />
+        </node>
+    </group>
+
+</launch>

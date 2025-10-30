@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="playback" default="false" />
+    <arg name="obstacles_topic" default="obstacles" />
+
+    <node pkg="uw" exec="sys_enable_node.py" name="sys_enable_node" output="screen">
+        <param name="use_sim_time" value="$(var playback)" />
+    </node>
+
+    <include file="$(find-pkg-share ds_localization)/launch/gnss_localization.launch.py">
+        <arg name="use_sim_time" value="$(var playback)" />
+        <arg name="oxts" value="false" />
+        <arg name="input_odom_topic" value="/novatel/odom"/>
+    </include>
+
+    <node pkg="ds_routing" exec="route_database_node" output="screen">
+        <param name="use_sim_time" value="$(var playback)" />
+        <remap from="dbw_enabled" to="/vehicle/dbw_enabled" />
+        <remap from="odom" to="/vehicle/odom" />
+    </node>
+
+    <node pkg="ds_planner" exec="speed_profile_generator_node" output="screen" >
+        <param name="use_sim_time" value="$(var playback)" />
+    </node>
+
+    <node pkg="ds_planner" exec="ds_planner_node" output="screen" >
+        <param name="use_sim_time" value="$(var playback)" />
+        <param name="preview_time" value="8.0" />
+        <param name="footprint_length" value="6.5" />
+        <param name="footprint_x_offset" value="2.0" />
+        <param name="footprint_width" value="0.5" />
+        <remap from="dbw_enabled" to="/vehicle/dbw_enabled" />
+        <remap from="odom" to="/vehicle/odom" />
+        <remap from="obstacles" to="$(var obstacles_topic)" />
+    </node>
+
+    <node pkg="ds_trajectory_control" exec="ds_trajectory_control_node" output="screen" >
+        <param name="use_sim_time" value="$(var playback)" />
+        <remap from="dbw_enabled" to="/vehicle/dbw_enabled" />
+        <remap from="odom" to="/vehicle/odom" />
+        <remap from="ulc/cmd" to="/vehicle/ulc/cmd" />
+        <remap from="ulc/report" to="/vehicle/ulc/report" />
+        <remap from="steering/cmd" to="/vehicle/steering/cmd" />
+    </node>
+
+    <node pkg="ds_lidar_seg" exec="ds_lidar_seg_single_node" name="lidar_segmentation" output="screen">
+        <param name="use_sim_time" value="$(var playback)" />
+        <param name="roi_x_min" value="0.0" />
+        <param name="roi_y_min" value="-10.0" />
+        <param name="roi_y_max" value="10.0" />
+        <param name="roi_z_min" value="-0.25" />
+        <param name="roi_z_max" value="3.0" />
+        <remap from="cloud" to="/front_lidar/points" />
+    </node>
+
+    <node pkg="diagnostic_aggregator" exec="aggregator_node" name="diagnostic_aggregator" output="screen">
+        <param name="use_sim_time" value="$(var playback)" />
+        <param from="$(find-pkg-share ds_routing)/config/diagnostics_aggregator_params.yaml" />
+    </node>
+
+</launch>

@@ -1,0 +1,9 @@
+ntrip_forwarding:
+  ros__parameters:
+    caster_ip: wiscors.dot.wi.gov
+    caster_port: 2101
+    mountpoint: RTCM34
+    ntrip_username: uwmad/liang
+    ntrip_password: '574296247'
+    broadcast_ip: 192.168.0.255
+    broadcast_port: 50472

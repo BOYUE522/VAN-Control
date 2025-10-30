@@ -1,0 +1,15 @@
+oxts_driver:
+  ros__parameters:
+    ncom_rate             : 100
+    timestamp_mode        : 0 # Timestamped by the ROS node time
+
+oxts_ins:
+  ros__parameters:
+    ncom_rate             : 100
+    pub_nav_sat_fix_rate  : 100
+    pub_velocity_rate     : 100
+    lrf_source            : 2           # Set automatically from first position of NCom packet aligned to ENU
+    pub_imu_flag          : true
+    nav_sat_fix_topic     : "fix"
+    velocity_topic        : "velocity"
+    imu_topic             : "imu"
